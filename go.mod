@@ -2,6 +2,7 @@ module github.com/shots-fired/shots-store
 
 require (
 	github.com/go-redis/redis v6.14.1+incompatible
+	github.com/gorilla/mux v1.6.2
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/onsi/ginkgo v1.6.0 // indirect
 	github.com/onsi/gomega v1.4.1 // indirect
