@@ -6,3 +6,9 @@ Shots is a Discord bot. This project houses all the code responsible for updatin
 
 1. Install Go 1.11 or higher
 2. `go get -u github.com/shots-fired/shots-store`
+
+## Running
+
+1. Install docker and docker-compose
+2. `docker-compose build`
+3. `docker-compose up`
