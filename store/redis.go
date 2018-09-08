@@ -27,7 +27,17 @@ func (r Redis) Ping() (string, error) {
 	return r.Client.Ping().Result()
 }
 
-// Get returns the value under the given id
-func (r Redis) Get(id string) (string, error) {
-	return r.Client.Get(id).Result()
+// Get returns the value for the key and field
+func (r Redis) Get(key, field string) (string, error) {
+	return r.Client.HGet(key, field).Result()
+}
+
+// GetAll returns all values for the given key
+func (r Redis) GetAll(key string) (map[string]string, error) {
+	return r.Client.HGetAll(key).Result()
+}
+
+// Set is used to set a value for a specific field under a key
+func (r Redis) Set(key, field string, value interface{}) error {
+	return r.Client.HSet(key, field, value).Err()
 }
