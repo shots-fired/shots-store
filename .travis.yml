@@ -15,4 +15,8 @@ jobs:
         - go install golang.org/x/lint/golint
         - golint ./...
     - stage: test
-      script: go test ./...
+      script: 
+        - go get github.com/mattn/goveralls
+        - go install github.com/mattn/goveralls
+        - go test ./... -v -covermode=count -coverprofile coverage.out
+        - goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
