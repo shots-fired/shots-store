@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	r := store.New()
-	e := streamers.NewEngine(r)
-	apis.HostAPIs(e)
+	s := store.New()
+	e := streamers.NewEngine(s)
+	r := apis.New(e)
+	apis.Host(r)
 }

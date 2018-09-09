@@ -13,8 +13,8 @@ import (
 
 var streamersEngine streamers.Engine
 
-// HostAPIs sets up the handlers for different routes and hosts the server
-func HostAPIs(engine streamers.Engine) {
+// New returns a new router
+func New(engine streamers.Engine) *mux.Router {
 	streamersEngine = engine
 	r := mux.NewRouter()
 	r.HandleFunc("/streamers", getAllStreamers).Methods("GET")
@@ -22,6 +22,11 @@ func HostAPIs(engine streamers.Engine) {
 	r.HandleFunc("/streamers/{id}", setStreamer).Methods("POST", "PUT")
 	r.HandleFunc("/streamers/{id}", deleteStreamer).Methods("DELETE")
 
+	return r
+}
+
+// Host hosts the web server for the router
+func Host(r *mux.Router) {
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         "0.0.0.0:8888",
