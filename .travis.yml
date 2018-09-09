@@ -1,0 +1,12 @@
+language: go
+
+go:
+  - "1.11.x"
+  - master
+
+jobs:
+  include:
+    - stage: lint
+      script: golint ./...
+    - stage: test
+      script: go test ./...
