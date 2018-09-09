@@ -3,13 +3,16 @@ language: go
 go:
   - master
 
-before_script:
-  - go get -u golang.org/x/lint/golint
-  - go install golang.org/x/lint/golint
+stages:
+  - lint
+  - test
 
 jobs:
   include:
     - stage: lint
-      script: golint ./...
+      script: 
+        - go get -u golang.org/x/lint/golint
+        - go install golang.org/x/lint/golint
+        - golint ./...
     - stage: test
       script: go test ./...
