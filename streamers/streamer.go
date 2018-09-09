@@ -10,6 +10,7 @@ type (
 		Viewers int    `json:"viewers"`
 	}
 
+	// Streamers is a collection of Streamer structs
 	Streamers []Streamer
 )
 
