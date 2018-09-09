@@ -40,8 +40,8 @@ func (e engine) GetStreamer(field string) (Streamer, error) {
 	}
 
 	var streamer Streamer
-	unmarshalErr := json.Unmarshal([]byte(res), &streamer)
-	if unmarshalErr != nil {
+	err = json.Unmarshal([]byte(res), &streamer)
+	if err != nil {
 		return Streamer{}, err
 	}
 
@@ -58,9 +58,9 @@ func (e engine) GetAllStreamers() (Streamers, error) {
 	var streamers Streamers
 	for _, v := range res {
 		var streamer Streamer
-		unmarshalErr := json.Unmarshal([]byte(v), &streamer)
-		if unmarshalErr != nil {
-			return Streamers{}, unmarshalErr
+		err = json.Unmarshal([]byte(v), &streamer)
+		if err != nil {
+			return Streamers{}, err
 		}
 		streamers = append(streamers, streamer)
 	}

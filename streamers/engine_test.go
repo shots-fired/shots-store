@@ -11,7 +11,7 @@ import (
 	"github.com/shots-fired/shots-store/streamers"
 )
 
-func TestBooks(t *testing.T) {
+func TestStreamers(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Streamers Suite")
 }
@@ -51,6 +51,14 @@ var _ = Describe("Streamers", func() {
 			Expect(err).To(Equal(errors.New("error")))
 			Expect(res).To(Equal(streamers.Streamer{}))
 		})
+
+		It("should error if the store returns content that cannot be marshaled into a Streamer struct", func() {
+			mockStore.EXPECT().Get(gomock.Any(), gomock.Any()).Return("hi", nil)
+			res, err := engine.GetStreamer("field")
+
+			Expect(err).ToNot(BeNil())
+			Expect(res).To(Equal(streamers.Streamer{}))
+		})
 	})
 
 	Describe("GetAllStreamers", func() {
@@ -76,6 +84,14 @@ var _ = Describe("Streamers", func() {
 			res, err := engine.GetAllStreamers()
 
 			Expect(err).To(Equal(errors.New("error")))
+			Expect(res).To(Equal(streamers.Streamers{}))
+		})
+
+		It("should error if the store returns content that cannot be marshaled into a Streamer struct", func() {
+			mockStore.EXPECT().GetAll(gomock.Any()).Return(map[string]string{"1": "hi"}, nil)
+			res, err := engine.GetAllStreamers()
+
+			Expect(err).ToNot(BeNil())
 			Expect(res).To(Equal(streamers.Streamers{}))
 		})
 	})
