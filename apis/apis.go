@@ -19,7 +19,7 @@ func HostAPIs(engine streamers.Engine) {
 	r := mux.NewRouter()
 	r.HandleFunc("/streamers", getAllStreamers).Methods("GET")
 	r.HandleFunc("/streamers/{id}", getStreamer).Methods("GET")
-	r.HandleFunc("/streamers/{id}", setStreamer).Methods("POST")
+	r.HandleFunc("/streamers/{id}", setStreamer).Methods("POST", "PUT")
 	r.HandleFunc("/streamers/{id}", deleteStreamer).Methods("DELETE")
 
 	srv := &http.Server{
