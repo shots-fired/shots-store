@@ -9,6 +9,8 @@ type (
 		Status  string `json:"status"`
 		Viewers int    `json:"viewers"`
 	}
+
+	Streamers []Streamer
 )
 
 // MarshalBinary implements encoding.BinaryMarshaler so Streamer can be saved to the redis cache without any conversion

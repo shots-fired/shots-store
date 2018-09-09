@@ -11,7 +11,7 @@ type (
 	Engine interface {
 		SetStreamer(field string, val Streamer) error
 		GetStreamer(field string) (Streamer, error)
-		GetAllStreamers() ([]Streamer, error)
+		GetAllStreamers() (Streamers, error)
 		DeleteStreamer(field string) error
 	}
 
@@ -49,18 +49,18 @@ func (e engine) GetStreamer(field string) (Streamer, error) {
 }
 
 // GetAllStreamers returns a slice of all streamers in the streamers key
-func (e engine) GetAllStreamers() ([]Streamer, error) {
+func (e engine) GetAllStreamers() (Streamers, error) {
 	res, err := e.Store.GetAll("streamers")
 	if err != nil {
-		return []Streamer{}, err
+		return Streamers{}, err
 	}
 
-	var streamers []Streamer
+	var streamers Streamers
 	for _, v := range res {
 		var streamer Streamer
 		unmarshalErr := json.Unmarshal([]byte(v), &streamer)
 		if unmarshalErr != nil {
-			return []Streamer{}, unmarshalErr
+			return Streamers{}, unmarshalErr
 		}
 		streamers = append(streamers, streamer)
 	}
