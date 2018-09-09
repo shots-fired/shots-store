@@ -11,6 +11,8 @@ type (
 	Engine interface {
 		SetStreamer(field string, val Streamer) error
 		GetStreamer(field string) (Streamer, error)
+		GetAllStreamers() ([]Streamer, error)
+		DeleteStreamer(field string) error
 	}
 
 	engine struct {
@@ -44,4 +46,29 @@ func (e engine) GetStreamer(field string) (Streamer, error) {
 	}
 
 	return streamer, nil
+}
+
+// GetAllStreamers returns a slice of all streamers in the streamers key
+func (e engine) GetAllStreamers() ([]Streamer, error) {
+	res, err := e.Store.GetAll("streamers")
+	if err != nil {
+		return []Streamer{}, err
+	}
+
+	var streamers []Streamer
+	for _, v := range res {
+		var streamer Streamer
+		unmarshalErr := json.Unmarshal([]byte(v), &streamer)
+		if unmarshalErr != nil {
+			return []Streamer{}, unmarshalErr
+		}
+		streamers = append(streamers, streamer)
+	}
+
+	return streamers, nil
+}
+
+// DeleteStreamer deletes the streamer with the key of field
+func (e engine) DeleteStreamer(field string) error {
+	return e.Store.Delete("streamers", field)
 }

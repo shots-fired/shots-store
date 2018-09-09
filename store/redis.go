@@ -41,3 +41,8 @@ func (r Redis) GetAll(key string) (map[string]string, error) {
 func (r Redis) Set(key, field string, value interface{}) error {
 	return r.Client.HSet(key, field, value).Err()
 }
+
+// Delete deletes a field within a key
+func (r Redis) Delete(key, field string) error {
+	return r.Client.HDel(key, field).Err()
+}

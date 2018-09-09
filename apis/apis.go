@@ -2,6 +2,7 @@ package apis
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -12,11 +13,14 @@ import (
 
 var streamersEngine streamers.Engine
 
+// HostAPIs sets up the handlers for different routes and hosts the server
 func HostAPIs(engine streamers.Engine) {
 	streamersEngine = engine
 	r := mux.NewRouter()
+	r.HandleFunc("/streamers", getAllStreamers).Methods("GET")
 	r.HandleFunc("/streamers/{id}", getStreamer).Methods("GET")
 	r.HandleFunc("/streamers/{id}", setStreamer).Methods("POST")
+	r.HandleFunc("/streamers/{id}", deleteStreamer).Methods("DELETE")
 
 	srv := &http.Server{
 		Handler:      r,
@@ -30,7 +34,6 @@ func HostAPIs(engine streamers.Engine) {
 
 func getStreamer(w http.ResponseWriter, r *http.Request) {
 	res, err := streamersEngine.GetStreamer(mux.Vars(r)["id"])
-	log.Printf("Res, Err, %+v, %v", res, err)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -44,16 +47,50 @@ func getStreamer(w http.ResponseWriter, r *http.Request) {
 	w.Write(streamer)
 }
 
-func setStreamer(w http.ResponseWriter, r *http.Request) {
-	err := streamersEngine.SetStreamer(mux.Vars(r)["id"], streamers.Streamer{
-		Name: "jake",
-	})
+func getAllStreamers(w http.ResponseWriter, r *http.Request) {
+	res, err := streamersEngine.GetAllStreamers()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	streamers, marshalErr := json.Marshal(res)
+	if marshalErr != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-	log.Printf("Err, %v", err)
+	w.Write(streamers)
+}
+
+func setStreamer(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var streamer streamers.Streamer
+	err = json.Unmarshal(body, &streamer)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = streamersEngine.SetStreamer(mux.Vars(r)["id"], streamer)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		w.WriteHeader(http.StatusOK)
 	}
+}
+
+func deleteStreamer(w http.ResponseWriter, r *http.Request) {
+	err := streamersEngine.DeleteStreamer(mux.Vars(r)["id"])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
