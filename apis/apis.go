@@ -53,13 +53,18 @@ func getAllStreamers(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	streamers, marshalErr := json.Marshal(res)
-	if marshalErr != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
-	w.Write(streamers)
+	if len(res) > 0 {
+		streamers, marshalErr := json.Marshal(res)
+		if marshalErr != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.Write(streamers)
+	} else {
+		w.Write([]byte("[]"))
+	}
 }
 
 func setStreamer(w http.ResponseWriter, r *http.Request) {
