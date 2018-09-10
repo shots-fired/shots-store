@@ -43,11 +43,7 @@ func getStreamer(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	streamer, marshalErr := json.Marshal(res)
-	if marshalErr != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	streamer, _ := json.Marshal(res)
 
 	w.Write(streamer)
 }
@@ -60,11 +56,7 @@ func getAllStreamers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(res) > 0 {
-		streamers, marshalErr := json.Marshal(res)
-		if marshalErr != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+		streamers, _ := json.Marshal(res)
 
 		w.Write(streamers)
 	} else {

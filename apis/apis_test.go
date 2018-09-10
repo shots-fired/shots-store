@@ -78,6 +78,15 @@ var _ = Describe("Streamers", func() {
 
 				Expect(res.Code).To(Equal(http.StatusInternalServerError))
 			})
+
+			It("should return an empty array if store returns no streamers", func() {
+				mockStore.EXPECT().GetAll(gomock.Any()).Return(map[string]string{}, nil)
+				req, _ := http.NewRequest("GET", "/streamers", nil)
+				res := executeRequest(req, router)
+
+				Expect(res.Code).To(Equal(http.StatusOK))
+				Expect(res.Body.String()).To(Equal("[]"))
+			})
 		})
 
 		Describe("DELETE /streamers/{id}", func() {
