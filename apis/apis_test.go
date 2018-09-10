@@ -1,6 +1,7 @@
 package apis_test
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -47,6 +48,14 @@ var _ = Describe("Streamers", func() {
 				Expect(res.Code).To(Equal(http.StatusOK))
 				Expect(res.Body.String()).To(Equal("{\"name\":\"something\",\"status\":\"\",\"viewers\":0}"))
 			})
+
+			It("should error if the store errors", func() {
+				mockStore.EXPECT().Get(gomock.Any(), gomock.Any()).Return("", errors.New("error"))
+				req, _ := http.NewRequest("GET", "/streamers/1", nil)
+				res := executeRequest(req, router)
+
+				Expect(res.Code).To(Equal(http.StatusInternalServerError))
+			})
 		})
 
 		Describe("GET /streamers", func() {
@@ -61,6 +70,14 @@ var _ = Describe("Streamers", func() {
 				Expect(res.Code).To(Equal(http.StatusOK))
 				Expect(res.Body.String()).To(Equal("[{\"name\":\"something\",\"status\":\"\",\"viewers\":0},{\"name\":\"else\",\"status\":\"\",\"viewers\":0}]"))
 			})
+
+			It("should error if the store errors", func() {
+				mockStore.EXPECT().GetAll(gomock.Any()).Return(map[string]string{}, errors.New("error"))
+				req, _ := http.NewRequest("GET", "/streamers", nil)
+				res := executeRequest(req, router)
+
+				Expect(res.Code).To(Equal(http.StatusInternalServerError))
+			})
 		})
 
 		Describe("DELETE /streamers/{id}", func() {
@@ -70,6 +87,14 @@ var _ = Describe("Streamers", func() {
 				res := executeRequest(req, router)
 
 				Expect(res.Code).To(Equal(http.StatusOK))
+			})
+
+			It("should error if the store errors", func() {
+				mockStore.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(errors.New("error"))
+				req, _ := http.NewRequest("DELETE", "/streamers/1", nil)
+				res := executeRequest(req, router)
+
+				Expect(res.Code).To(Equal(http.StatusInternalServerError))
 			})
 		})
 
@@ -81,6 +106,14 @@ var _ = Describe("Streamers", func() {
 
 				Expect(res.Code).To(Equal(http.StatusOK))
 			})
+
+			It("should error if the store errors", func() {
+				mockStore.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any()).Return(errors.New("error"))
+				req, _ := http.NewRequest("POST", "/streamers/1", strings.NewReader("{\"name\":\"something\",\"status\":\"online\",\"viewers\":1}"))
+				res := executeRequest(req, router)
+
+				Expect(res.Code).To(Equal(http.StatusInternalServerError))
+			})
 		})
 
 		Describe("PUT /streamers/{id}", func() {
@@ -90,6 +123,14 @@ var _ = Describe("Streamers", func() {
 				res := executeRequest(req, router)
 
 				Expect(res.Code).To(Equal(http.StatusOK))
+			})
+
+			It("should error if the store errors", func() {
+				mockStore.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any()).Return(errors.New("error"))
+				req, _ := http.NewRequest("PUT", "/streamers/1", strings.NewReader("{\"name\":\"something\",\"status\":\"online\",\"viewers\":1}"))
+				res := executeRequest(req, router)
+
+				Expect(res.Code).To(Equal(http.StatusInternalServerError))
 			})
 		})
 	})
