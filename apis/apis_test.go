@@ -31,7 +31,7 @@ var _ = Describe("Streamers", func() {
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockStore = mocks.NewMockStore(ctrl)
-		router = apis.New(streamers.NewEngine(mockStore))
+		router = apis.NewRouter(streamers.NewEngine(mockStore))
 	})
 
 	AfterEach(func() {
@@ -116,6 +116,13 @@ var _ = Describe("Streamers", func() {
 				Expect(res.Code).To(Equal(http.StatusOK))
 			})
 
+			It("should error if the request body is not proper json", func() {
+				req, _ := http.NewRequest("POST", "/streamers/1", strings.NewReader("hi"))
+				res := executeRequest(req, router)
+
+				Expect(res.Code).To(Equal(http.StatusBadRequest))
+			})
+
 			It("should error if the store errors", func() {
 				mockStore.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any()).Return(errors.New("error"))
 				req, _ := http.NewRequest("POST", "/streamers/1", strings.NewReader("{\"name\":\"something\",\"status\":\"online\",\"viewers\":1}"))
@@ -134,6 +141,13 @@ var _ = Describe("Streamers", func() {
 				Expect(res.Code).To(Equal(http.StatusOK))
 			})
 
+			It("should error if the request body is not proper json", func() {
+				req, _ := http.NewRequest("PUT", "/streamers/1", strings.NewReader("hi"))
+				res := executeRequest(req, router)
+
+				Expect(res.Code).To(Equal(http.StatusBadRequest))
+			})
+
 			It("should error if the store errors", func() {
 				mockStore.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any()).Return(errors.New("error"))
 				req, _ := http.NewRequest("PUT", "/streamers/1", strings.NewReader("{\"name\":\"something\",\"status\":\"online\",\"viewers\":1}"))
@@ -141,6 +155,18 @@ var _ = Describe("Streamers", func() {
 
 				Expect(res.Code).To(Equal(http.StatusInternalServerError))
 			})
+		})
+	})
+
+	Describe("NewRouter", func() {
+		It("should not be nil", func() {
+			Expect(apis.NewRouter(streamers.NewEngine(mockStore))).ToNot(BeNil())
+		})
+	})
+
+	Describe("NewServer", func() {
+		It("should not be nil", func() {
+			Expect(apis.NewServer(mux.NewRouter())).ToNot(BeNil())
 		})
 	})
 })

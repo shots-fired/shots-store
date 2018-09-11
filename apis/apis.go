@@ -3,7 +3,6 @@ package apis
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 
@@ -13,8 +12,8 @@ import (
 
 var streamersEngine streamers.Engine
 
-// New returns a new router
-func New(engine streamers.Engine) *mux.Router {
+// NewRouter returns a new router
+func NewRouter(engine streamers.Engine) *mux.Router {
 	streamersEngine = engine
 	r := mux.NewRouter()
 	r.HandleFunc("/streamers", getAllStreamers).Methods("GET")
@@ -25,16 +24,14 @@ func New(engine streamers.Engine) *mux.Router {
 	return r
 }
 
-// Host hosts the web server for the router
-func Host(r *mux.Router) {
-	srv := &http.Server{
+// NewServer returns the web server for the router
+func NewServer(r *mux.Router) *http.Server {
+	return &http.Server{
 		Handler:      r,
 		Addr:         "0.0.0.0:8888",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-
-	log.Fatal(srv.ListenAndServe())
 }
 
 func getStreamer(w http.ResponseWriter, r *http.Request) {
@@ -65,14 +62,9 @@ func getAllStreamers(w http.ResponseWriter, r *http.Request) {
 }
 
 func setStreamer(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
+	body, _ := ioutil.ReadAll(r.Body)
 	var streamer streamers.Streamer
-	err = json.Unmarshal(body, &streamer)
+	err := json.Unmarshal(body, &streamer)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
