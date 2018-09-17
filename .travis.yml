@@ -27,4 +27,4 @@ jobs:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
         - docker build -t store .
         - docker tag store shotsfired/shots-store:latest
-        - docker push shots-fired/shots-store
+        - docker push shotsfired/shots-store
