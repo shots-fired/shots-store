@@ -2,6 +2,7 @@ package streamers_test
 
 import (
 	"errors"
+	"sort"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -68,6 +69,7 @@ var _ = Describe("Streamers", func() {
 				"2": "{\"name\":\"else\"}",
 			}, nil)
 			res, err := engine.GetAllStreamers()
+			sort.SliceStable(res, func(i, j int) bool { return res[i].Name > res[j].Name })
 
 			Expect(err).To(BeNil())
 			Expect(res).To(Equal(streamers.Streamers{
