@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -28,7 +29,7 @@ func NewRouter(engine streamers.Engine) *mux.Router {
 func NewServer(r *mux.Router) *http.Server {
 	return &http.Server{
 		Handler:      r,
-		Addr:         "0.0.0.0:8888",
+		Addr:         os.Getenv("SERVER_ADDRESS"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

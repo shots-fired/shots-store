@@ -12,6 +12,15 @@ Shots is a Discord bot. This project houses all the code responsible for updatin
 
 ## Running
 
-1. Install docker and docker-compose
-2. `docker-compose build`
-3. `docker-compose up`
+The easiest way to run Shots is by cloning the `shots-deploy` project and using Docker Compose.
+
+1. `git clone github.com/shots-fired/shots-deploy`
+2. `cd shots-deploy`
+3. `docker-compose build`
+4. `docker-compose up`
+
+## Environment variables
+
+* SERVER_ADDRESS
+* REDIS_ADDRESS
+* REDIS_PASSWORD

@@ -1,6 +1,10 @@
 package store
 
-import "github.com/go-redis/redis"
+import (
+	"os"
+
+	"github.com/go-redis/redis"
+)
 
 type (
 	redisClient struct {
@@ -12,9 +16,9 @@ type (
 func New() Store {
 	return &redisClient{
 		Client: redis.NewClient(&redis.Options{
-			Addr:     "redis:6379",
-			Password: "", // no password set
-			DB:       0,  // use default DB
+			Addr:     os.Getenv("REDIS_ADDRESS"),
+			Password: os.Getenv("REDIS_PASSWORD"),
+			DB:       0,
 		}),
 	}
 }
