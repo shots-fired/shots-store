@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/shots-fired/shots-common/models"
 	"github.com/shots-fired/shots-store/streamers"
 )
 
@@ -64,7 +65,7 @@ func getAllStreamers(w http.ResponseWriter, r *http.Request) {
 
 func setStreamer(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
-	var streamer streamers.Streamer
+	var streamer models.Streamer
 	err := json.Unmarshal(body, &streamer)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

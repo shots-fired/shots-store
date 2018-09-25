@@ -8,6 +8,7 @@ import (
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/shots-fired/shots-common/models"
 	"github.com/shots-fired/shots-store/mocks"
 	"github.com/shots-fired/shots-store/streamers"
 )
@@ -40,7 +41,7 @@ var _ = Describe("Streamers", func() {
 			res, err := engine.GetStreamer("field")
 
 			Expect(err).To(BeNil())
-			Expect(res).To(Equal(streamers.Streamer{
+			Expect(res).To(Equal(models.Streamer{
 				Name: "something",
 			}))
 		})
@@ -50,7 +51,7 @@ var _ = Describe("Streamers", func() {
 			res, err := engine.GetStreamer("field")
 
 			Expect(err).To(Equal(errors.New("error")))
-			Expect(res).To(Equal(streamers.Streamer{}))
+			Expect(res).To(Equal(models.Streamer{}))
 		})
 
 		It("should error if the store returns content that cannot be marshaled into a Streamer struct", func() {
@@ -58,7 +59,7 @@ var _ = Describe("Streamers", func() {
 			res, err := engine.GetStreamer("field")
 
 			Expect(err).ToNot(BeNil())
-			Expect(res).To(Equal(streamers.Streamer{}))
+			Expect(res).To(Equal(models.Streamer{}))
 		})
 	})
 
@@ -72,7 +73,7 @@ var _ = Describe("Streamers", func() {
 			sort.SliceStable(res, func(i, j int) bool { return res[i].Name > res[j].Name })
 
 			Expect(err).To(BeNil())
-			Expect(res).To(Equal(streamers.Streamers{
+			Expect(res).To(Equal(models.Streamers{
 				{Name: "something", Status: "", Viewers: 0},
 				{Name: "else", Status: "", Viewers: 0},
 			}))
@@ -86,7 +87,7 @@ var _ = Describe("Streamers", func() {
 			res, err := engine.GetAllStreamers()
 
 			Expect(err).To(Equal(errors.New("error")))
-			Expect(res).To(Equal(streamers.Streamers{}))
+			Expect(res).To(Equal(models.Streamers{}))
 		})
 
 		It("should error if the store returns content that cannot be marshaled into a Streamer struct", func() {
@@ -94,7 +95,7 @@ var _ = Describe("Streamers", func() {
 			res, err := engine.GetAllStreamers()
 
 			Expect(err).ToNot(BeNil())
-			Expect(res).To(Equal(streamers.Streamers{}))
+			Expect(res).To(Equal(models.Streamers{}))
 		})
 	})
 
@@ -102,13 +103,13 @@ var _ = Describe("Streamers", func() {
 		It("should not error if the store's set does not error", func() {
 			mockStore.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 
-			Expect(engine.SetStreamer("field", streamers.Streamer{Name: "something"})).To(BeNil())
+			Expect(engine.SetStreamer("field", models.Streamer{Name: "something"})).To(BeNil())
 		})
 
 		It("should error if the store's set errors", func() {
 			mockStore.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any()).Return(errors.New("error"))
 
-			Expect(engine.SetStreamer("field", streamers.Streamer{Name: "something"})).To(Equal(errors.New("error")))
+			Expect(engine.SetStreamer("field", models.Streamer{Name: "something"})).To(Equal(errors.New("error")))
 		})
 	})
 

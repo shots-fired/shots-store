@@ -3,15 +3,16 @@ package streamers
 import (
 	"encoding/json"
 
+	"github.com/shots-fired/shots-common/models"
 	"github.com/shots-fired/shots-store/store"
 )
 
 type (
 	// Engine describes all the functions that the streamers engine can perform
 	Engine interface {
-		SetStreamer(field string, val Streamer) error
-		GetStreamer(field string) (Streamer, error)
-		GetAllStreamers() (Streamers, error)
+		SetStreamer(field string, val models.Streamer) error
+		GetStreamer(field string) (models.Streamer, error)
+		GetAllStreamers() (models.Streamers, error)
 		DeleteStreamer(field string) error
 	}
 
@@ -28,39 +29,39 @@ func NewEngine(store store.Store) Engine {
 }
 
 // SetStreamer sets a streamer data in the streamers key under the given field
-func (e engine) SetStreamer(field string, val Streamer) error {
+func (e engine) SetStreamer(field string, val models.Streamer) error {
 	return e.Store.Set("streamers", field, val)
 }
 
 // GetStreamer returns the streamer under the streamers key with the given field
-func (e engine) GetStreamer(field string) (Streamer, error) {
+func (e engine) GetStreamer(field string) (models.Streamer, error) {
 	res, err := e.Store.Get("streamers", field)
 	if err != nil {
-		return Streamer{}, err
+		return models.Streamer{}, err
 	}
 
-	var streamer Streamer
+	var streamer models.Streamer
 	err = json.Unmarshal([]byte(res), &streamer)
 	if err != nil {
-		return Streamer{}, err
+		return models.Streamer{}, err
 	}
 
 	return streamer, nil
 }
 
 // GetAllStreamers returns a slice of all streamers in the streamers key
-func (e engine) GetAllStreamers() (Streamers, error) {
+func (e engine) GetAllStreamers() (models.Streamers, error) {
 	res, err := e.Store.GetAll("streamers")
 	if err != nil {
-		return Streamers{}, err
+		return models.Streamers{}, err
 	}
 
-	var streamers Streamers
+	var streamers models.Streamers
 	for _, v := range res {
-		var streamer Streamer
+		var streamer models.Streamer
 		err = json.Unmarshal([]byte(v), &streamer)
 		if err != nil {
-			return Streamers{}, err
+			return models.Streamers{}, err
 		}
 		streamers = append(streamers, streamer)
 	}

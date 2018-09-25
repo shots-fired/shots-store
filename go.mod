@@ -7,6 +7,7 @@ require (
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v1.4.1
+	github.com/shots-fired/shots-common v0.0.0-20180925012708-830c4055bfaf
 	golang.org/x/net v0.0.0-20180906233101-161cd47e91fd // indirect
 	golang.org/x/sys v0.0.0-20180907202204-917fdcba135d // indirect
 	golang.org/x/text v0.3.0 // indirect
