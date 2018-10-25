@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/shots-fired/shots-store/apis"
@@ -25,7 +25,7 @@ var _ = Describe("Streamers", func() {
 	var (
 		ctrl      *gomock.Controller
 		mockStore *mocks.MockStore
-		router    *mux.Router
+		router    *httprouter.Router
 	)
 
 	BeforeEach(func() {
@@ -166,12 +166,12 @@ var _ = Describe("Streamers", func() {
 
 	Describe("NewServer", func() {
 		It("should not be nil", func() {
-			Expect(apis.NewServer(mux.NewRouter())).ToNot(BeNil())
+			Expect(apis.NewServer(httprouter.New())).ToNot(BeNil())
 		})
 	})
 })
 
-func executeRequest(req *http.Request, router *mux.Router) *httptest.ResponseRecorder {
+func executeRequest(req *http.Request, router *httprouter.Router) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	router.ServeHTTP(rr, req)
 

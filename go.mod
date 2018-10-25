@@ -3,8 +3,8 @@ module github.com/shots-fired/shots-store
 require (
 	github.com/go-redis/redis v6.14.1+incompatible
 	github.com/golang/mock v1.1.1
-	github.com/gorilla/mux v1.6.2
 	github.com/hpcloud/tail v1.0.0 // indirect
+	github.com/julienschmidt/httprouter v1.2.0
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v1.4.1
 	github.com/shots-fired/shots-common v0.0.0-20180925012708-830c4055bfaf

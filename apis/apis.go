@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 	"github.com/shots-fired/shots-common/models"
 	"github.com/shots-fired/shots-store/streamers"
 )
@@ -15,19 +15,20 @@ import (
 var streamersEngine streamers.Engine
 
 // NewRouter returns a new router
-func NewRouter(engine streamers.Engine) *mux.Router {
+func NewRouter(engine streamers.Engine) *httprouter.Router {
 	streamersEngine = engine
-	r := mux.NewRouter()
-	r.HandleFunc("/streamers", getAllStreamers).Methods("GET")
-	r.HandleFunc("/streamers/{id}", getStreamer).Methods("GET")
-	r.HandleFunc("/streamers/{id}", setStreamer).Methods("POST", "PUT")
-	r.HandleFunc("/streamers/{id}", deleteStreamer).Methods("DELETE")
+	r := httprouter.New()
+	r.GET("/streamers", getAllStreamers)
+	r.GET("/streamers/:id", getStreamer)
+	r.POST("/streamers/:id", setStreamer)
+	r.PUT("/streamers/:id", setStreamer)
+	r.DELETE("/streamers/:id", deleteStreamer)
 
 	return r
 }
 
 // NewServer returns the web server for the router
-func NewServer(r *mux.Router) *http.Server {
+func NewServer(r *httprouter.Router) *http.Server {
 	return &http.Server{
 		Handler:      r,
 		Addr:         os.Getenv("SERVER_ADDRESS"),
@@ -36,8 +37,8 @@ func NewServer(r *mux.Router) *http.Server {
 	}
 }
 
-func getStreamer(w http.ResponseWriter, r *http.Request) {
-	res, err := streamersEngine.GetStreamer(mux.Vars(r)["id"])
+func getStreamer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	res, err := streamersEngine.GetStreamer(ps.ByName("id"))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -47,7 +48,7 @@ func getStreamer(w http.ResponseWriter, r *http.Request) {
 	w.Write(streamer)
 }
 
-func getAllStreamers(w http.ResponseWriter, r *http.Request) {
+func getAllStreamers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	res, err := streamersEngine.GetAllStreamers()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -63,7 +64,7 @@ func getAllStreamers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func setStreamer(w http.ResponseWriter, r *http.Request) {
+func setStreamer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	body, _ := ioutil.ReadAll(r.Body)
 	var streamer models.Streamer
 	err := json.Unmarshal(body, &streamer)
@@ -72,7 +73,7 @@ func setStreamer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = streamersEngine.SetStreamer(mux.Vars(r)["id"], streamer)
+	err = streamersEngine.SetStreamer(ps.ByName("id"), streamer)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -81,8 +82,8 @@ func setStreamer(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func deleteStreamer(w http.ResponseWriter, r *http.Request) {
-	err := streamersEngine.DeleteStreamer(mux.Vars(r)["id"])
+func deleteStreamer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	err := streamersEngine.DeleteStreamer(ps.ByName("id"))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
